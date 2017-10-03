@@ -30,7 +30,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"itpUtils"
 	"os"
         "net/http"
         "io"
@@ -40,6 +39,7 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"github.com/hyperledger/fabric/auction/itpUtils"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -1763,11 +1763,11 @@ func GetListOfBids(stub shim.ChaincodeStubInterface, function string, args []str
 	for i = 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, myKeyVal, err := rs.Next()
+		myKeyVal, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
-		bid, err := JSONtoBid(myKeyVal)
+		bid, err := JSONtoBid(myKeyVal.GetValue())
 		if err != nil {
 			error_str := fmt.Sprintf("GetListOfBids() operation failed - Unmarshall Error. %s", err)
 			fmt.Println(error_str)
@@ -1811,11 +1811,11 @@ func GetListOfInitAucs(stub shim.ChaincodeStubInterface, function string, args [
 	for i = 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, myKeyVal, err := rs.Next()
+		myKeyVal, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
-		ar, err := JSONtoAucReq(myKeyVal)
+		ar, err := JSONtoAucReq(myKeyVal.GetValue())
 		if err != nil {
 			error_str := fmt.Sprintf("GetListOfInitAucs() operation failed - Unmarshall Error. %s", err)
 			fmt.Println(error_str)
@@ -1858,11 +1858,11 @@ func GetListOfOpenAucs(stub shim.ChaincodeStubInterface, function string, args [
 	for i = 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, myKeyVal, err := rs.Next()
+		myKeyVal, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
-		ar, err := JSONtoAucReq(myKeyVal)
+		ar, err := JSONtoAucReq(myKeyVal.GetValue())
 		if err != nil {
 			error_str := fmt.Sprintf("GetListOfOpenAucs() operation failed - Unmarshall Error. %s", err)
 			fmt.Println(error_str)
@@ -1913,11 +1913,11 @@ func GetItemLog(stub shim.ChaincodeStubInterface, function string, args []string
 	for i = 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, myKeyVal, err := rs.Next()
+		myKeyVal, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
-		il, err := JSONtoItemLog(myKeyVal)
+		il, err := JSONtoItemLog(myKeyVal.GetValue())
 		if err != nil {
 			error_str := fmt.Sprintf("GetItemLog() operation failed - Unmarshall Error. %s", err)
 			fmt.Println(error_str)
@@ -1971,11 +1971,11 @@ func GetItemListByCat(stub shim.ChaincodeStubInterface, function string, args []
 	for i = 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, myKeyVal, err := rs.Next()
+		myKeyVal, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
-		io, err := JSONtoAR(myKeyVal)
+		io, err := JSONtoAR(myKeyVal.GetValue())
 		if err != nil {
 			error_str := fmt.Sprintf("GetItemListByCat() operation failed - Unmarshall Error. %s", err)
 			fmt.Println(error_str)
@@ -2026,11 +2026,11 @@ func GetUserListByCat(stub shim.ChaincodeStubInterface, function string, args []
 	for i = 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, myKeyVal, err := rs.Next()
+		myKeyVal, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
-		uo, err := JSONtoUser(myKeyVal)
+		uo, err := JSONtoUser(myKeyVal.GetValue())
 		if err != nil {
 			error_str := fmt.Sprintf("GetUserListByCat() operation failed - Unmarshall Error. %s", err)
 			fmt.Println(error_str)
@@ -2076,11 +2076,11 @@ func GetLastBid(stub shim.ChaincodeStubInterface, function string, args []string
 	for i := 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, myKeyVal, err := rs.Next()
+		myKeyVal, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
-		currentBid, err := JSONtoBid(myKeyVal)
+		currentBid, err := JSONtoBid(myKeyVal.GetValue())
 		if err != nil {
 			error_str := fmt.Sprintf("GetHighestBid(0 operation failed. %s", err)
 			fmt.Println(error_str)
@@ -2096,7 +2096,7 @@ func GetLastBid(stub shim.ChaincodeStubInterface, function string, args []string
 
 		if bidTime.Sub(highestTime) > 0 {
 			highestTime = bidTime
-			Avalbytes = myKeyVal
+			Avalbytes = myKeyVal.GetValue()
 		}
 		return shim.Success(Avalbytes)
 	}
@@ -2122,7 +2122,7 @@ func GetNoOfBidsReceived(stub shim.ChaincodeStubInterface, function string, args
 	for i = 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, _, err := rs.Next()
+		_, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
@@ -2151,11 +2151,11 @@ func GetHighestBid(stub shim.ChaincodeStubInterface, function string, args []str
 	for i = 0; rs.HasNext(); i++ {
 
 		// We can process whichever return value is of interest
-		_, myKeyVal, err := rs.Next()
+		myKeyVal, err := rs.Next()
 		if err != nil {
 			return shim.Success(nil)
 		}
-		currentBid, err := JSONtoBid(myKeyVal)
+		currentBid, err := JSONtoBid(myKeyVal.GetValue())
 		if err != nil {
 			error_str := fmt.Sprintf("GetHighestBid(0 operation failed. %s", err)
 			fmt.Println(error_str)
@@ -2171,7 +2171,7 @@ func GetHighestBid(stub shim.ChaincodeStubInterface, function string, args []str
 
 		if bidPrice >= highestBid {
 			highestBid = bidPrice
-			Avalbytes = myKeyVal
+			Avalbytes = myKeyVal.GetValue()
 
 		}
 	}

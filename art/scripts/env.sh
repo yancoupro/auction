@@ -1,3 +1,3 @@
 #!/bin/bash
 
-export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/msp/sampleconfig
+export CORE_PEER_MSPCONFIGPATH=$GOPATH/src/github.com/hyperledger/fabric/sampleconfig/msp
